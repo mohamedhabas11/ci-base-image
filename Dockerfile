@@ -2,6 +2,7 @@
 FROM python:3.9-alpine3.12 AS base
 
 # Copy only the necessary files first to take advantage of caching
+COPY apk_packages.txt .
 COPY pip_requirements.txt .
 COPY ansible_requirements.yml .
 
