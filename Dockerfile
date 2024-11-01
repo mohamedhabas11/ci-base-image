@@ -17,4 +17,3 @@ RUN apk update && \
 
 # Default command
 # CMD ["ansible", "--version"]
-CMD ["ansible-playbook", "--version"]
