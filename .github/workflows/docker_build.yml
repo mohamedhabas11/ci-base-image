@@ -22,6 +22,9 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }}
 
+    - name: Capture Image ID
+      run: echo "image_id=$(docker images -q ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }})" >> $GITHUB_ENV
+
     - name: Verify Docker image locally
       run: docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }}
 
@@ -35,9 +38,9 @@ jobs:
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Tag and Push the Docker image to Docker Hub with release tag ${{ github.event.release.tag_name }}
+    - name: Tag and Push the Docker image to Docker Hub
       run: |
-        docker tag ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }} ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ github.event.release.tag_name }}
+        docker tag ${{ env.image_id }} ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ github.event.release.tag_name }}
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ github.event.release.tag_name }}
 
     - name: Verify Docker image on Docker Hub
