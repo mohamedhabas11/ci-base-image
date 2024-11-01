@@ -2,7 +2,7 @@
 FROM python:3.9-alpine3.12
 
 # Copy all required files
-COPY . ./
+COPY . .
 
 # Install system dependencies and Ansible in a single layer
 RUN apk update && \
