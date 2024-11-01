@@ -15,4 +15,5 @@ RUN apk update && \
     rm -rf /var/cache/apk/* /tmp/*
 
 # Default command
-CMD ["ansible", "--version"]
+# CMD ["ansible", "--version"]
+CMD ["ansible-playbook", "--version"]
