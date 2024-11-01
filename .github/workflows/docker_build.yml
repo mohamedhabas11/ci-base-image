@@ -21,10 +21,10 @@ jobs:
 
     - name: Build the Docker image
       run: |
-        docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.repository.split('/')[1] }}:${{ env.docker_tag }}
+        docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ env.docker_tag }}
 
     - name: Verify Docker image locally
-      run: docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ secrets.DOCKER_USERNAME }}/${{ github.repository.split('/')[1] }}:${{ env.docker_tag }}
+      run: docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ env.docker_tag }}
 
   push:
     if: github.event_name == 'release'
@@ -38,13 +38,13 @@ jobs:
 
     - name: Build the Docker image with release tag
       run: |
-        docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.repository.split('/')[1] }}:${{ github.event.release.tag_name }}
+        docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
 
     - name: Push the Docker image to Docker Hub
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ github.repository.split('/')[1] }}:${{ github.event.release.tag_name }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
 
     - name: Verify Docker image on Docker Hub
       run: |
-        docker pull ${{ secrets.DOCKER_USERNAME }}/${{ github.repository.split('/')[1] }}:${{ github.event.release.tag_name }}
-        docker inspect ${{ secrets.DOCKER_USERNAME }}/${{ github.repository.split('/')[1] }}:${{ github.event.release.tag_name }}
+        docker pull ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
+        docker inspect ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
