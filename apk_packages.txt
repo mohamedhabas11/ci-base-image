@@ -1,0 +1,13 @@
+bash
+git
+sshpass
+rsync
+ca-certificates
+openssl
+openssh-client
+libffi-dev
+openssl-dev
+gcc
+musl-dev
+python3-dev
+make
