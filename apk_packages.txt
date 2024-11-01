@@ -11,3 +11,5 @@ gcc
 musl-dev
 python3-dev
 make
+py3-pip
+libssh-dev
