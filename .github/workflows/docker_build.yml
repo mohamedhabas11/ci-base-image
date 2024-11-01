@@ -18,13 +18,15 @@ jobs:
 
     - name: Set Docker Tag
       id: docker_tag
-      run: echo "tag=$(date +%s)" >> $GITHUB_ENV
+      run: |
+        echo "tag=$(date +%s)" >> $GITHUB_ENV
+        echo "docker_tag=${{ env.tag:-latest }}" >> $GITHUB_ENV  # Fallback to 'latest' if empty
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ github.repository }}:${{ env.docker_tag }}
+      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }}
 
     - name: Verify Docker image locally
-      run: docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ github.repository }}:${{ env.docker_tag }}
+      run: docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }}
 
   push:
     if: github.event_name == 'release'
@@ -41,7 +43,7 @@ jobs:
 
     - name: Tag and Push the Docker image to Docker Hub
       run: |
-        docker tag ${{ github.repository }}:${{ env.docker_tag }} $DOCKER_USERNAME/${{ github.repository }}:${{ github.event.release.tag_name }}
+        docker tag ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }} $DOCKER_USERNAME/${{ github.repository }}:${{ github.event.release.tag_name }}
         docker push $DOCKER_USERNAME/${{ github.repository }}:${{ github.event.release.tag_name }}
 
     - name: Verify Docker image on Docker Hub
