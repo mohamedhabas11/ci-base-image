@@ -23,7 +23,9 @@ jobs:
       run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }}
 
     - name: Capture Image ID
-      run: echo "image_id=$(docker images -q ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }})" >> $GITHUB_ENV
+      run: |
+        image_id=$(docker images -q ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }})
+        echo "image_id=$image_id" >> $GITHUB_ENV
 
     - name: Verify Docker image locally
       run: docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ env.docker_tag }}
