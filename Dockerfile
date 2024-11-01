@@ -12,7 +12,8 @@ RUN apk update && \
     apk add --no-cache $(cat apk_packages.txt) && \
     pip install --no-cache-dir -r pip_requirements.txt && \
     ansible-galaxy install -r ansible_requirements.yml && \
-    rm -rf /var/cache/apk/* /tmp/*
+    rm -rf /var/cache/apk/* /tmp/* && \
+    ansible --version
 
 # Default command
 # CMD ["ansible", "--version"]
