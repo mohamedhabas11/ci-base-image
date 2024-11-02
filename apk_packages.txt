@@ -1,14 +1,14 @@
-git                # For version control, if needed
-sshpass            # For password-based SSH authentication
-rsync              # For file synchronization
-ca-certificates    # For SSL certificate verification
-openssl            # For secure communications
-openssh-client     # For SSH connectivity
-libffi-dev         # Required for some Python packages
-openssl-dev        # Development files for OpenSSL
-gcc                # C compiler needed for building Python packages
-musl-dev           # C standard library development files
-python3-dev        # Python development files
-make               # Tool for compiling
-py3-pip            # Python package manager
-libssh-dev         # Development files for libssh
+git
+sshpass
+rsync
+ca-certificates
+openssl
+openssh-client
+libffi-dev
+openssl-dev
+gcc
+musl-dev
+python3-dev
+make
+py3-pip
+libssh-dev
