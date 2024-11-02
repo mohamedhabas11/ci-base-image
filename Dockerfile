@@ -2,9 +2,7 @@
 FROM python:3.9-alpine3.12 AS base
 
 # Copy only the necessary files first to take advantage of caching
-COPY apk_packages.txt .
-COPY pip_requirements.txt .
-COPY ansible_requirements.yml .
+COPY pip_requirements.txt ansible_requirements.yml apk_packages.txt ./
 
 # Upgrade pip to the latest version and install dependencies
 RUN python -m pip install --upgrade pip && \
@@ -14,8 +12,9 @@ RUN python -m pip install --upgrade pip && \
     ansible-galaxy install -r ansible_requirements.yml && \
     rm -rf /var/cache/apk/* /tmp/*
 
-# Copy the rest of the application code
-COPY . .
+# Copy the ssh_config file to /root/.ssh/
+COPY config/ssh_config /root/.ssh/config
+RUN chmod 600 /root/.ssh/config
 
 # Display ansible version
 RUN ansible --version
