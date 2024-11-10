@@ -1,6 +1,6 @@
 PyYAML==6.0.1
 cryptography==35.0.0
-ansible==8.1.0
+ansible==8.7.0
 ansible-core==2.15.12
 pexpect==4.0.0
 ansible-pylibssh==1.2.2
