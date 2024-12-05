@@ -1,5 +1,5 @@
 # Use the official Python image based on Alpine as the base image
-FROM python:3.10.15-alpine3.19 AS base
+FROM python:3.13.1-alpine3.19 AS base
 
 # Copy only the necessary files first to take advantage of caching
 COPY pip_requirements.txt ansible_requirements.yml apk_packages.txt ./
