@@ -16,5 +16,7 @@ RUN python -m pip install --upgrade pip && \
 COPY config/ssh_config /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
 
-# Display ansible version
-RUN ansible --version
+# Display ansible and linters version
+RUN ansible --version && \
+    ansible-lint --version && \
+    yamllint --version
