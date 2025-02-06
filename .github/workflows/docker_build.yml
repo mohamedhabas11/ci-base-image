@@ -21,10 +21,12 @@ jobs:
 
     - name: Build the Docker image
       run: |
-        docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ env.docker_tag }}
+        docker_username="${{ secrets.DOCKER_USERNAME || 'localbuild' }}"
+        echo "docker_username=$docker_username" >> $GITHUB_ENV
+        docker build . --file Dockerfile --tag $docker_username/${{ github.event.repository.name }}:${{ env.docker_tag }}
 
     - name: Verify Docker image locally
-      run: docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ env.docker_tag }}
+      run: docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ env.docker_username }}/${{ github.event.repository.name }}:${{ env.docker_tag }}
 
   push:
     if: github.event_name == 'release'
