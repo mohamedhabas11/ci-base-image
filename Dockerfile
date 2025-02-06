@@ -22,11 +22,12 @@ RUN git clone https://github.com/Azure/azure-cli.git && \
 
 # Install Azure CLI
 WORKDIR /app/azure-cli
-RUN python -m venv venv && \
-    source venv/bin/activate && \
+RUN python -m venv /app/venv && \
+    source /app/venv/bin/activate && \
     pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir -r requirements_dev.txt && \
-    pip install --no-cache-dir -e .
+    pip install --no-cache-dir -e . && \
+    pip install --no-cache-dir ansible ansible-lint yamllint
 
 # Copy the ssh_config file to /root/.ssh/
 COPY config/ssh_config /root/.ssh/config
@@ -48,7 +49,10 @@ RUN apk add --no-cache \
 
 # Copy the built Azure CLI and Python environment
 COPY --from=base /app/azure-cli /app/azure-cli
-COPY --from=base /app/azure-cli/venv /app/venv
+COPY --from=base /app/venv /app/venv
+
+# Copy Ansible Galaxy roles
+COPY --from=base /root/.ansible /root/.ansible
 
 # Set the entrypoint
 ENV PATH="/app/venv/bin:$PATH"
