@@ -1,2 +1,2 @@
-# ansible-ci-base-image
-utility image with common dependencies to run ansible tasks from a ci pipeline.
+# ci-base-image
+utility image with common dependencies to run CLI scripts from a ci pipeline.
