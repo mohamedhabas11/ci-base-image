@@ -1,22 +1,51 @@
-# Use the official Python image based on Alpine as the base image
-FROM python:3.13.1-alpine3.19 AS base
+# syntax=docker/dockerfile:1
 
-# Copy only the necessary files first to take advantage of caching
-COPY pip_requirements.txt ansible_requirements.yml apk_packages.txt ./
+###############
+# Builder Stage
+###############
+FROM python:3.13.1-alpine3.19 AS builder
 
-# Upgrade pip to the latest version and install dependencies
-RUN python -m pip install --upgrade pip && \
-    apk update && \
+# Copy dependency lists
+COPY apk_packages.txt pip_requirements.txt ansible_requirements.yml ./
+
+# Install build-time packages and upgrade pip
+RUN apk update && \
     apk add --no-cache $(cat apk_packages.txt) && \
-    pip install --no-cache-dir -r pip_requirements.txt && \
-    ansible-galaxy install -r ansible_requirements.yml && \
-    rm -rf /var/cache/apk/* /tmp/*
+    python -m pip install --upgrade pip
 
-# Copy the ssh_config file to /root/.ssh/
+# Create a virtual environment and update PATH
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --upgrade pip
+
+# Install Python dependencies into the venv (ensure ansible is included here, or install it separately)
+RUN pip install --no-cache-dir -r pip_requirements.txt
+
+# Now the ansible-galaxy command is available
+RUN ansible-galaxy install -r ansible_requirements.yml
+
+################
+# Final Stage
+################
+FROM python:3.13.1-alpine3.19 AS final
+
+# Copy the built virtual environment and Ansible artifacts from the builder stage
+COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /root/.ansible /root/.ansible
+
+# Copy CLI packages list and install common CLI tools
+COPY apk_cli_packages.txt ./
+RUN apk update && \
+    apk add --no-cache $(cat apk_cli_packages.txt)
+
+# Copy SSH configuration and fix permissions
 COPY config/ssh_config /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
 
-# Display ansible and linters version
-RUN ansible --version && \
-    ansible-lint --version && \
-    yamllint --version
+# Set PATH to use the virtual environment’s binaries
+ENV PATH="/opt/venv/bin:$PATH"
+
+# (Optional) Display versions for verification
+RUN ansible --version && ansible-lint --version && yamllint --version
+
+CMD ["python"]
